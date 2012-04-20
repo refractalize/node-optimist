@@ -346,9 +346,7 @@ test('nested dotted objects', function (t) {
 test('boolean and alias with chainable api', function (t) {
     var aliased = [ '-h', 'derp' ];
     var regular = [ '--herp',  'derp' ];
-    var opts = {
-        herp: { alias: 'h', boolean: true }
-    };
+    
     var aliasedArgv = optimist(aliased)
         .boolean('herp')
         .alias('h', 'herp')
@@ -369,11 +367,58 @@ test('boolean and alias with chainable api', function (t) {
     t.end();
 });
 
+test('boolean and alias with chainable api with short form boolean', function (t) {
+    var aliased = [ '-h', 'derp' ];
+    var regular = [ '--herp',  'derp' ];
+    
+    var aliasedArgv = optimist(aliased)
+        .boolean('h')
+        .alias('h', 'herp')
+        .argv;
+    var propertyArgv = optimist(regular)
+        .boolean('h')
+        .alias('h', 'herp')
+        .argv;
+    var expected = {
+        herp: true,
+        h: true,
+        '_': [ 'derp' ],
+        '$0': expresso,
+    };
+
+    t.same(aliasedArgv, expected);
+    t.same(propertyArgv, expected); 
+    t.end();
+});
+
 test('boolean and alias with options hash', function (t) {
     var aliased = [ '-h', 'derp' ];
     var regular = [ '--herp', 'derp' ];
     var opts = {
         herp: { alias: 'h', boolean: true }
+    };
+    var aliasedArgv = optimist(aliased)
+      .options(opts)
+      .argv;
+    var propertyArgv = optimist(regular).options(opts).argv;
+    var expected = {
+        herp: true,
+        h: true,
+        '_': [ 'derp' ],
+        '$0': expresso,
+    };
+
+    t.same(aliasedArgv, expected);
+    t.same(propertyArgv, expected);
+
+    t.end();
+});
+
+test('boolean and alias with options hash with short form option', function (t) {
+    var aliased = [ '-h', 'derp' ];
+    var regular = [ '--herp', 'derp' ];
+    var opts = {
+        h: { alias: 'herp', boolean: true }
     };
     var aliasedArgv = optimist(aliased)
       .options(opts)
